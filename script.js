@@ -1,35 +1,47 @@
-$(document).ready(function() { // uses moment to display current day on page
-    $("#currentDay").text(moment().format("dddd, MMMM Do"));
-});
 
-var scheduleText = document.querySelector("col-md-10 text")
 
-//utilizing a function to save to local storage
-function saveData(){
-    localStorage.setItem('data', JSON.stringify(scheduleText));
-    localStorage.getItem ('data');
-    var data = 'data'
-    scheduleText.append('data');          
-}
-// uses moment to display the time in the console
-function getTime(){ 
-    var time = moment().format('HH:mm');
-    console.log(time)
-     
-    //conditional statements to change the attributes of the time blocks
-        if (time == $('container.div id:first-child')) {
-            $('.row time-block').addClass('.present');
+$(document).ready(function() {
+    // listen for save button clicks
+    $(".saveBtn").on("click", function() {
+      // get nearby values
+      var value = $(this).siblings(".text").val();
+      var time = $(this).parent().attr("id");
+      // save in localStorage
+      localStorage.setItem(time, value);
+    });
+    function hourUpdater() {
+      // get current number of hours
+      var currentHour = moment().hours();
+      // loop over time blocks
+      $(".time-block").each(function() {
+        var blockHour = parseInt($(this).attr("id").split("-")[1]);
+        // check if we've moved past this time
+        if (blockHour < currentHour) {
+          $(this).addClass("past");
+        } 
+        else if (blockHour === currentHour) {
+          $(this).removeClass("past");
+          $(this).addClass("present");
+        } 
+        else {
+          $(this).removeClass("past");
+          $(this).removeClass("present");
+          $(this).addClass("future");
         }
-        else if (time > $('container.div id:first-child')) { 
-            $('.row time-block').addClass('.future');
-        }
-        else (time < $('container.div id:first-child'))
-            $('.row time-block').addClass('.past');
-    
-}
+      });
+    }
+    hourUpdater();
+    // set up interval to check if current time needs to be updated
+    var interval = setInterval(hourUpdater, 15000);
+    // load any saved data from localStorage
+    $(".col-md-10 text").val(localStorage.getItem("09:00"));
+    $(".col-md-10 text").val(localStorage.getItem("10:00"));
+    $(".col-md-10 text").val(localStorage.getItem("11:00"));
+    $(".col-md-10 text").val(localStorage.getItem("12:00"));
+    $(".col-md-10 text").val(localStorage.getItem("13:00"));
+    $(".col-md-10 text").val(localStorage.getItem("14:00"));
+    $(".col-md-10 text").val(localStorage.getItem("15:00"));
+    $(".col-md-10 text").val(localStorage.getItem("16:00"));
+    $(".col-md-10 text").val(localStorage.getItem("17:00"));
 
-// setInterval(getTime(), 5000);
-setInterval(function(){ getTime()}, 3000);
-  
-//save button functionality event listener    
-$('saveBtn').on("click", saveData());
+  });
